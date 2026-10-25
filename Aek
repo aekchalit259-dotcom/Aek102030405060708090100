@@ -1,0 +1,168 @@
+--[[
+    Made by : https://v3rmillion.net/member.php?action=profile&uid=507120
+    Go vouch release thread : https://v3rmillion.net/showthread.php?tid=1040650
+]]
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+-- โค้ดส่วนหน้าต่างดาวน์โหลด (Loader)
+local CoreGui = game:GetService("CoreGui")
+local TweenService = game:GetService("TweenService")
+
+local LoadGui = Instance.new("ScreenGui")
+LoadGui.Name = "FluentLoader"
+LoadGui.Parent = CoreGui
+LoadGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = LoadGui
+MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+MainFrame.Size = UDim2.new(0, 450, 0, 280)
+MainFrame.ClipsDescendants = true
+
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 12)
+UICorner.Parent = MainFrame
+
+local BgImage = Instance.new("ImageLabel")
+BgImage.Name = "BgImage"
+BgImage.Parent = MainFrame
+BgImage.BackgroundTransparency = 1
+BgImage.Size = UDim2.new(1, 0, 1, 0)
+BgImage.Image = "rbxassetid://74276344038961"
+BgImage.ScaleType = Enum.ScaleType.Crop
+
+local Overlay = Instance.new("Frame")
+Overlay.Name = "Overlay"
+Overlay.Parent = MainFrame
+Overlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+Overlay.BackgroundTransparency = 0.4
+Overlay.Size = UDim2.new(1, 0, 1, 0)
+
+local TitleLabel = Instance.new("TextLabel")
+TitleLabel.Parent = MainFrame
+TitleLabel.BackgroundTransparency = 1
+TitleLabel.Position = UDim2.new(0, 0, 0, 40)
+TitleLabel.Size = UDim2.new(1, 0, 0, 40)
+TitleLabel.Font = Enum.Font.GothamBold
+TitleLabel.Text = "SYSTEM LOADER"
+TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleLabel.TextSize = 22
+
+local StatusLabel = Instance.new("TextLabel")
+StatusLabel.Parent = MainFrame
+StatusLabel.BackgroundTransparency = 1
+StatusLabel.Position = UDim2.new(0, 0, 0, 110)
+StatusLabel.Size = UDim2.new(1, 0, 0, 30)
+StatusLabel.Font = Enum.Font.Gotham
+StatusLabel.Text = "กำลังโหลดข้อมูล..."
+StatusLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+StatusLabel.TextSize = 14
+
+local BarBg = Instance.new("Frame")
+BarBg.Parent = MainFrame
+BarBg.AnchorPoint = Vector2.new(0.5, 0)
+BarBg.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+BarBg.Position = UDim2.new(0.5, 0, 0, 165)
+BarBg.Size = UDim2.new(0, 380, 0, 8)
+
+local BarBgCorner = Instance.new("UICorner")
+BarBgCorner.CornerRadius = UDim.new(1, 0)
+BarBgCorner.Parent = BarBg
+
+local BarFill = Instance.new("Frame")
+BarFill.Parent = BarBg
+BarFill.BackgroundColor3 = Color3.fromRGB(0, 255, 140)
+BarFill.Size = UDim2.new(0, 0, 1, 0)
+
+local BarFillCorner = Instance.new("UICorner")
+BarFillCorner.CornerRadius = UDim.new(1, 0)
+BarFillCorner.Parent = BarFill
+
+local PercentLabel = Instance.new("TextLabel")
+PercentLabel.Parent = MainFrame
+PercentLabel.BackgroundTransparency = 1
+PercentLabel.Position = UDim2.new(0, 0, 0, 190)
+PercentLabel.Size = UDim2.new(1, 0, 0, 30)
+PercentLabel.Font = Enum.Font.GothamBold
+PercentLabel.Text = "0%"
+PercentLabel.TextColor3 = Color3.fromRGB(0, 255, 140)
+PercentLabel.TextSize = 16
+
+-- ฟังก์ชันรันอนิเมชันหลอดโหลด
+task.spawn(function()
+    local steps = {
+        {text = "กำลังเชื่อมต่อระบบ...", progress = 0.25, time = 0.5},
+        {text = "กำลังโหลดข้อมูลส่วนประกอบ...", progress = 0.55, time = 0.7},
+        {text = "กำลังตั้งค่าระบบ...", progress = 0.85, time = 0.6},
+        {text = "เสร็จสิ้น!", progress = 1.0, time = 0.4},
+    }
+
+    for _, step in ipairs(steps) do
+        StatusLabel.Text = step.text
+        TweenService:Create(BarFill, TweenInfo.new(step.time, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(step.progress, 0, 1, 0)}):Play()
+        PercentLabel.Text = math.floor(step.progress * 100) .. "%"
+        task.wait(step.time)
+    end
+
+    task.wait(0.3)
+
+    local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    TweenService:Create(MainFrame, tweenInfo, {Size = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 1}):Play()
+    TweenService:Create(BgImage, tweenInfo, {ImageTransparency = 1}):Play()
+    TweenService:Create(Overlay, tweenInfo, {BackgroundTransparency = 1}):Play()
+    TweenService:Create(TitleLabel, tweenInfo, {TextTransparency = 1}):Play()
+    TweenService:Create(StatusLabel, tweenInfo, {TextTransparency = 1}):Play()
+    TweenService:Create(BarBg, tweenInfo, {BackgroundTransparency = 1}):Play()
+    TweenService:Create(BarFill, tweenInfo, {BackgroundTransparency = 1}):Play()
+    TweenService:Create(PercentLabel, tweenInfo, {TextTransparency = 1}):Play()
+
+    task.wait(0.5)
+    LoadGui:Destroy()
+end)
+
+-- โค้ดส่วน UI หลัก
+local library = loadstring(game:HttpGet(('https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wall%20v3')))()
+
+local w = library:CreateWindow("KUY")
+local b = w:CreateFolder("ฟังก์ชันเสริม")
+
+b:Label("x2Swiftz", {
+    TextSize = 25;
+    TextColor = Color3.fromRGB(255, 255, 255);
+    BgColor = Color3.fromRGB(69, 69, 69);
+})
+
+b:Button("วิ่งเร็วและแสดงตำแหน่งสีแดง (10 วินาที)", function()
+    local character = LocalPlayer.Character
+    if not character then return end
+    
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if not humanoid then return end
+    
+    -- บันทึกค่าความเร็วเดิม
+    local originalSpeed = humanoid.WalkSpeed
+    humanoid.WalkSpeed = originalSpeed * 2
+    
+    -- สร้าง Highlight แสดงตำแหน่งสีแดง
+    local highlight = Instance.new("Highlight")
+    highlight.Name = "SpeedHighlight"
+    highlight.Adornee = character
+    highlight.FillColor = Color3.fromRGB(255, 0, 0)
+    highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+    highlight.Parent = character
+    
+    -- หน่วงเวลา 10 วินาที แล้วคืนค่าเดิม
+    task.delay(10, function()
+        if humanoid and humanoid.Parent then
+            humanoid.WalkSpeed = originalSpeed
+        end
+        if highlight and highlight.Parent then
+            highlight:Destroy()
+        end
+    end)
+end)
